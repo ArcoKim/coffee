@@ -1,3 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
-<h3> Copyright @ 2018 All right reserved Semyeong Computer High Shool </h3>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Jeongtae Kim 2024</span>
+        </div>
+    </div>
+</footer>

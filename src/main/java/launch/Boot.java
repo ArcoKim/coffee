@@ -21,7 +21,7 @@ public class Boot {
         tomcat.setPort(Integer.parseInt(webPort));
 
         StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
-        System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
+        System.out.println("Configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
 
         File additionWebInfClasses = new File("target/classes");
         WebResourceRoot resources = new StandardRoot(ctx);

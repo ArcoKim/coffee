@@ -1,3 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
-매장별 커피 판매관리 Ver 1.0
+<header class="py-3">
+    <h1 class="text-center m-0 text-white">Coffee Admin Page</h1>
+</header>
