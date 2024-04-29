@@ -85,7 +85,7 @@
                         </div>
                         <div class="form-group">
                             <label for="saledate">판매날짜</label>
-                            <input type="text" class="form-control form-control-user" name="saledate"
+                            <input type="date" class="form-control form-control-user" name="saledate"
                                    id="saledate" placeholder="판매날짜를 입력하세요." required>
                         </div>
                         <div class="form-group">
