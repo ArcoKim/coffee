@@ -13,7 +13,7 @@
 
     <jsp:include page="../parts/styles.jsp" />
 
-    <title>지점 - 추가</title>
+    <title>Shop - Add</title>
 </head>
 
 <body id="page-top">
@@ -30,7 +30,7 @@
             <div class="container-fluid">
 
                 <div class="d-sm-flex align-items-center justify-content-between my-4">
-                    <h1 class="h3 mb-0 text-gray-800">지점 - 추가</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Shop - Add</h1>
                 </div>
 
                 <div class="p-5 w-75 m-auto">

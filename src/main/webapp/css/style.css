@@ -1,6 +1,10 @@
 header {
     background-color: #896045;
-    min-height: 8vh;
+    height: 8vh;
+}
+
+header h1 {
+    line-height: 8vh;
 }
 
 #accordionSidebar {
@@ -32,6 +36,6 @@ header {
     padding-left: 15px;
 }
 
-.form-control-user, #dataTable, a {
+.form-control-user, #dataTable, a, .card-body {
     color: black;
 }

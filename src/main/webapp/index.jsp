@@ -1,3 +1,7 @@
+<%@ page import="org.slf4j.LoggerFactory" %>
+<%@ page import="org.slf4j.Logger" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="DBPKG.Util" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
@@ -9,7 +13,7 @@
 
     <jsp:include page="parts/styles.jsp" />
 
-    <title>대시보드</title>
+    <title>Dashboard</title>
 </head>
 
 <body id="page-top">
@@ -20,6 +24,17 @@
 
     <jsp:include page="parts/sidebar.jsp" />
 
+    <%
+        Logger log = LoggerFactory.getLogger("index.jsp");
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql;
+
+        try {
+            conn = Util.getConnection();
+    %>
     <div id="content-wrapper" class="d-flex flex-column">
 
         <div id="content">
@@ -27,7 +42,7 @@
             <div class="container-fluid">
 
                 <div class="d-sm-flex align-items-center justify-content-between my-4">
-                    <h1 class="h3 mb-0 text-gray-800">대시보드</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
                 </div>
 
                 <div class="row">
@@ -38,11 +53,25 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Earnings (Monthly)</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                            총 판매액</div>
+                                        <%
+                                            sql =
+                                                "SELECT TO_CHAR(SUM(a.amount * b.cost), '999,999,999,999') cost " +
+                                                "FROM tbl_salelist_01 a, tbl_product_01 b " +
+                                                "WHERE a.pcode = b.pcode";
+                                            pstmt = conn.prepareStatement(sql);
+                                            rs = pstmt.executeQuery();
+
+                                            rs.next();
+                                        %>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            총합
+                                            <br />
+                                            <%= rs.getString("cost") %>원
+                                        </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -55,11 +84,30 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Earnings (Annual)</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                            최대 매출 상품</div>
+                                        <%
+                                            sql =
+                                                "SELECT name, TO_CHAR(cost, 'FM999,999,999,999') cost " +
+                                                "FROM (SELECT a.name, SUM(a.cost * b.amount) cost " +
+                                                "      FROM tbl_product_01 a, " +
+                                                "           tbl_salelist_01 b " +
+                                                "      WHERE a.pcode = b.pcode " +
+                                                "      GROUP BY a.pcode, a.name " +
+                                                "      ORDER BY cost DESC) " +
+                                                "WHERE ROWNUM = 1";
+                                            pstmt = conn.prepareStatement(sql);
+                                            rs = pstmt.executeQuery();
+
+                                            rs.next();
+                                        %>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= rs.getString("name") %>
+                                            <br />
+                                            <%= rs.getString("cost") %>원
+                                        </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        <i class="fas fa-mug-hot fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -71,23 +119,33 @@
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                        </div>
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col-auto">
-                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="progress progress-sm mr-2">
-                                                    <div class="progress-bar bg-info" role="progressbar"
-                                                         style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                         aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            최대 매출 지점</div>
+                                        <%
+                                            sql =
+                                                "SELECT sname, TO_CHAR(cost, 'FM999,999,999,999') cost " +
+                                                "FROM (SELECT a.sname, SUM(c.amount * b.cost) cost " +
+                                                "      FROM tbl_shop_01 a, " +
+                                                "           tbl_product_01 b, " +
+                                                "           tbl_salelist_01 c " +
+                                                "      WHERE a.scode = c.scode " +
+                                                "        and b.pcode = c.pcode " +
+                                                "      GROUP BY a.scode, a.sname " +
+                                                "      ORDER BY cost DESC " +
+                                                ") WHERE ROWNUM=1";
+                                            pstmt = conn.prepareStatement(sql);
+                                            rs = pstmt.executeQuery();
+
+                                            rs.next();
+                                        %>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= rs.getString("sname") %>
+                                            <br />
+                                            <%= rs.getString("cost") %>원
                                         </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        <i class="fas fa-store fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -100,11 +158,29 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            Pending Requests</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                            최대 매출 판매</div>
+                                        <%
+                                            sql =
+                                                "SELECT name, TO_CHAR(cost, 'FM999,999,999,999') cost " +
+                                                "FROM (SELECT b.name, a.amount * b.cost cost " +
+                                                "      FROM tbl_salelist_01 a, " +
+                                                "           tbl_product_01 b " +
+                                                "      WHERE a.pcode = b.pcode " +
+                                                "      ORDER BY cost DESC) " +
+                                                "WHERE ROWNUM = 1";
+                                            pstmt = conn.prepareStatement(sql);
+                                            rs = pstmt.executeQuery();
+
+                                            rs.next();
+                                        %>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= rs.getString("name") %>
+                                            <br />
+                                            <%= rs.getString("cost") %>원
+                                        </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                        <i class="fas fa-handshake fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -114,85 +190,62 @@
 
                 <div class="row">
 
-                    <div class="col-lg-6 mb-4">
-
-                        <div class="row">
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-primary text-white shadow">
-                                    <div class="card-body">
-                                        Primary
-                                        <div class="text-white-50 small">#4e73df</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-success text-white shadow">
-                                    <div class="card-body">
-                                        Success
-                                        <div class="text-white-50 small">#1cc88a</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-info text-white shadow">
-                                    <div class="card-body">
-                                        Info
-                                        <div class="text-white-50 small">#36b9cc</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-warning text-white shadow">
-                                    <div class="card-body">
-                                        Warning
-                                        <div class="text-white-50 small">#f6c23e</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-danger text-white shadow">
-                                    <div class="card-body">
-                                        Danger
-                                        <div class="text-white-50 small">#e74a3b</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-secondary text-white shadow">
-                                    <div class="card-body">
-                                        Secondary
-                                        <div class="text-white-50 small">#858796</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-light text-black shadow">
-                                    <div class="card-body">
-                                        Light
-                                        <div class="text-black-50 small">#f8f9fc</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 mb-4">
-                                <div class="card bg-dark text-white shadow">
-                                    <div class="card-body">
-                                        Dark
-                                        <div class="text-white-50 small">#5a5c69</div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="card shadow mb-4 ml-2">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Table Description</h6>
                         </div>
-
+                        <div class="card-body">
+                            <ol>
+                                <li>
+                                    <strong>tbl_product_01</strong>: 이 테이블은 제품 정보를 저장합니다.
+                                    <ul>
+                                        <li><strong>pcode</strong>: 제품 코드를 나타내는 VARCHAR2(10) 타입의 주요 키(primary key)입니다.</li>
+                                        <li><strong>name</strong>: 제품 이름을 나타내는 VARCHAR2(20) 타입의 열입니다.</li>
+                                        <li><strong>cost</strong>: 제품 가격을 나타내는 NUMBER(10) 타입의 열입니다.</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <strong>tbl_shop_01</strong>: 이 테이블은 상점 정보를 저장합니다.
+                                    <ul>
+                                        <li><strong>scode</strong>: 상점 코드를 나타내는 VARCHAR2(10) 타입의 주요 키입니다.</li>
+                                        <li><strong>sname</strong>: 상점 이름을 나타내는 VARCHAR2(20) 타입의 열입니다.</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <strong>tbl_salelist_01</strong>: 이 테이블은 판매 목록 정보를 저장합니다.
+                                    <ul>
+                                        <li><strong>saleno</strong>: 판매 번호를 나타내는 NUMBER(10) 타입의 주요 키입니다.</li>
+                                        <li><strong>pcode</strong>: 제품 코드를 나타내는 VARCHAR2(10) 타입의 열이며, tbl_product_01의 pcode와 관계를 형성합니다.</li>
+                                        <li><strong>saledate</strong>: 판매 일자를 나타내는 DATE 타입의 열입니다.</li>
+                                        <li><strong>scode</strong>: 상점 코드를 나타내는 VARCHAR2(10) 타입의 열이며, tbl_shop_01의 scode와 관계를 형성합니다.</li>
+                                        <li><strong>amount</strong>: 제품 판매량을 나타내는 NUMBER(10) 타입의 열입니다.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
                     </div>
-                </div>
 
             </div>
 
         </div>
 
-        <jsp:include page="parts/footer.jsp" />
-
     </div>
+
+    <%
+        } catch (Exception e) {
+            log.error("SQL Error", e);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                log.error("Close Error", e);
+            }
+        }
+    %>
+
+    <jsp:include page="parts/footer.jsp" />
 
 </div>
 

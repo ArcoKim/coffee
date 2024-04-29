@@ -13,7 +13,7 @@
 
     <jsp:include page="../parts/styles.jsp" />
 
-    <title>판매 - 삭제</title>
+    <title>Sale - Remove</title>
 </head>
 
 <body id="page-top">
@@ -30,7 +30,7 @@
             <div class="container-fluid">
 
                 <div class="d-sm-flex align-items-center justify-content-between my-4">
-                    <h1 class="h3 mb-0 text-gray-800">판매 - 삭제</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Sale - Remove</h1>
                 </div>
 
                 <div class="p-5 w-75 m-auto">

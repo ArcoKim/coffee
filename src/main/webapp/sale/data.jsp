@@ -13,7 +13,7 @@
 
     <jsp:include page="../parts/styles.jsp" />
 
-    <title>판매 - 확인</title>
+    <title>Sale - Check</title>
 </head>
 
 <body id="page-top">
@@ -30,10 +30,10 @@
             <div class="container-fluid">
 
                 <div class="d-sm-flex align-items-center justify-content-between my-4">
-                    <h1 class="h3 mb-0 text-gray-800">판매 - 확인</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Sale - Check</h1>
                 </div>
 
-                <div class="card shadow mb-4">
+                <div class="card shadow mb-3">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Sale</h6>
                     </div>
